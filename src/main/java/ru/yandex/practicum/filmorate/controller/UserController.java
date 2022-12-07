@@ -31,7 +31,7 @@ public class UserController {
             throw new VaidationExeption("Дата рождения не может быть в будущем");
         }
 
-        if (user.getName() == null) { user.setName( user.getLogin()); }
+        if (user.getName() == null || user.getName() == "") { user.setName( user.getLogin()); }
 
         user.setId(incId());
         userHashMap.put(user.getId(), user);
