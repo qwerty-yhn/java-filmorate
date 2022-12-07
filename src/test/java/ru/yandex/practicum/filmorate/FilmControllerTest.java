@@ -20,9 +20,9 @@ public class FilmControllerTest {
         Film film = new Film();
         film.setId(1);
         film.setName("Приключение Шурика");
-        film.setDescribtion("Совесткая комедия");
+        film.setDescription("Совесткая комедия");
         film.setReleaseDate(LocalDate.of(1965, Month.JULY, 23));
-        film.setDuration(Duration.ofMinutes(95));
+        film.setDuration(95);
 
         FilmController filmController = new FilmController();
 
@@ -32,9 +32,9 @@ public class FilmControllerTest {
 
         film.setId(1);
         film.setName("");
-        film.setDescribtion("Совесткая комедия");
+        film.setDescription("Совесткая комедия");
         film.setReleaseDate(LocalDate.of(1965, Month.JULY, 23));
-        film.setDuration(Duration.ofMinutes(95));
+        film.setDuration(95);
 
         try {
             filmController.addFilm(film);
@@ -45,9 +45,9 @@ public class FilmControllerTest {
 
         film.setId(1);
         film.setName("Приключение Шурика");
-        film.setDescribtion("...........................................................................................................................................................................................................");
+        film.setDescription("...........................................................................................................................................................................................................");
         film.setReleaseDate(LocalDate.of(1965, Month.JULY, 23));
-        film.setDuration(Duration.ofMinutes(95));
+        film.setDuration(95);
 
         try {
             filmController.addFilm(film);
@@ -58,9 +58,9 @@ public class FilmControllerTest {
 
         film.setId(1);
         film.setName("Приключение Шурика");
-        film.setDescribtion("Совесткая комедия");
+        film.setDescription("Совесткая комедия");
         film.setReleaseDate(LocalDate.of(1894, Month.DECEMBER, 28));
-        film.setDuration(Duration.ofMinutes(95));
+        film.setDuration(95);
 
         try {
             filmController.addFilm(film);
@@ -71,9 +71,9 @@ public class FilmControllerTest {
 
         film.setId(1);
         film.setName("Приключение Шурика");
-        film.setDescribtion("Совесткая комедия");
+        film.setDescription("Совесткая комедия");
         film.setReleaseDate(LocalDate.of(1965, Month.JULY, 23));
-        film.setDuration(Duration.ofMinutes(-95));
+        film.setDuration(-95);
 
         try {
             filmController.addFilm(film);
