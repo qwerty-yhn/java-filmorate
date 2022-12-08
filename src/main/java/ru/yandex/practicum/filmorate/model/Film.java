@@ -8,13 +8,13 @@ import lombok.Data;
 @Data
 public class Film {
 
-    int id;
+    private int id;
 
-    String name;
+    private String name;
 
-    String description;
+    private String description;
 
-    LocalDate releaseDate;
+    private LocalDate releaseDate;
 
-    int duration;
+    private int duration;
 }

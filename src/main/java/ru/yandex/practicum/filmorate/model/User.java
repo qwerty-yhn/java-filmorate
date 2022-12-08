@@ -4,16 +4,19 @@ import java.time.LocalDate;
 
 import lombok.Data;
 
+import javax.validation.constraints.Email;
+
 @Data
 public class User {
 
-    int id;
+    private int id;
 
-    String email;
+    @Email
+    private String email;
 
-    String login;
+    private String login;
 
-    String name;
+    private String name;
 
-    LocalDate birthday;
+    private LocalDate birthday;
 }

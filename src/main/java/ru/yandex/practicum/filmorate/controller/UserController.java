@@ -20,16 +20,8 @@ public class UserController {
     @PostMapping(value = "/users")
     public User createUser(@RequestBody User user){
         log.info("Получен запрос GET/users");
-        if(user.getEmail() == "" || !(user.getEmail().contains("@"))){
-            log.error("Электронная почта не может быть путой и должна содержать символ @");
-            throw new VaidationExeption("Электронная почта не может быть путой и должна содержать символ @");
-        }else if(user.getLogin() == "" || user.getLogin().contains(" ")){
-            log.error("Логин не может быть пустым и содержать пробелы");
-            throw new VaidationExeption("Логин не может быть пустым и содержать пробелы");
-        }else if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.error("Дата рождения не может быть в будущем");
-            throw new VaidationExeption("Дата рождения не может быть в будущем");
-        }
+
+        assertUser(user);
 
         if (user.getName() == null || user.getName() == "") { user.setName( user.getLogin()); }
 
@@ -40,16 +32,8 @@ public class UserController {
     @PutMapping(value = "/users")
     public User updateUser(@RequestBody User user){
         log.info("Получен запрос PUT/users");
-        if(user.getEmail() == "" && user.getEmail().contains("@")){
-            log.error("Электронная почта не может быть путой и должна содержать символ @");
-            throw new VaidationExeption("Электронная почта не может быть путой и должна содержать символ @");
-        }else if(user.getLogin() == "" && user.getLogin().contains(" ")){
-            log.error("Логин не может быть пустым и содержать пробелы");
-            throw new VaidationExeption("Логин не может быть пустым и содержать пробелы");
-        }else if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.error("Дата рождения не может быть в будущем");
-            throw new VaidationExeption("Дата рождения не может быть в будущем");
-        }
+
+        assertUser(user);
 
         if (user.getName() == "") { user.setName( user.getLogin()); }
         if(userHashMap.containsKey(user.getId())){
@@ -75,4 +59,16 @@ public class UserController {
     private int incId(){
         generatorId = generatorId + 1;
         return generatorId;}
+    private void assertUser(User user){
+        if(user.getEmail() == "" || !(user.getEmail().contains("@"))){
+            log.error("Электронная почта не может быть путой и должна содержать символ @");
+            throw new VaidationExeption("Электронная почта не может быть путой и должна содержать символ @");
+        }else if(user.getLogin() == "" || user.getLogin().contains(" ")){
+            log.error("Логин не может быть пустым и содержать пробелы");
+            throw new VaidationExeption("Логин не может быть пустым и содержать пробелы");
+        }else if (user.getBirthday().isAfter(LocalDate.now())) {
+            log.error("Дата рождения не может быть в будущем");
+            throw new VaidationExeption("Дата рождения не может быть в будущем");
+        }
+    }
 }

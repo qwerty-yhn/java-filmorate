@@ -4,7 +4,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exeption.VaidationExeption;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +13,6 @@ import static java.util.Calendar.DECEMBER;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.yandex.practicum.filmorate.model.User;
 
 @RestController
 public class FilmController {
@@ -27,19 +25,8 @@ public class FilmController {
     @PostMapping(value = "/films")
     public Film addFilm(@RequestBody Film film){
         log.info("Получен запрос POST/films");
-        if(film.getName() == ""){
-            log.error("Название не может быть пустым");
-            throw new VaidationExeption("Название не может быть пустым");
-        }else if (film.getReleaseDate().isBefore(LocalDate.of(1895, DECEMBER, 28))) {
-            log.error("Дата релиза - не раньше 28 декабря 1895 года");
-            throw new VaidationExeption("Дата релиза - не раньше 28 декабря 1895 года");
-        }else if (film.getDuration() < 0) {
-            log.error("Продолжительность фильма не должна быть положительной");
-            throw new VaidationExeption("Продолжительность фильма не должна быть положительной");
-        }else if(film.getDescription().length() >= 200){
-                log.error("Максимальная длина описание - 200 символов");
-                throw new VaidationExeption("Максимальная длина описание - 200 символов");
-        }
+
+        assertFilm(film);
 
         film.setId(incId());
         filmHashMap.put(film.getId(), film);
@@ -48,19 +35,8 @@ public class FilmController {
     @PutMapping(value = "/films")
     public Film updateFilm(@RequestBody Film film){
         log.info("Получен запрос POST/films");
-        if(film.getName() == ""){
-            log.error("Название не может быть пустым");
-            throw new VaidationExeption("Название не может быть пустым");
-        } else if (film.getDescription().length() > 200) {
-            log.error("Максимальная длина описание - 200 символов");
-            throw new VaidationExeption("Максимальная длина описание - 200 символов");
-        } else if (film.getReleaseDate().isBefore(LocalDate.of(1895, DECEMBER, 28))) {
-            log.error("Дата релиза - не раньше 28 декабря 1895 года");
-            throw new VaidationExeption("Дата релиза - не раньше 28 декабря 1895 года");
-        }else if (film.getDuration() < 0) {
-            log.error("Продолжительность фильма не должна быть положительной");
-            throw new VaidationExeption("Продолжительность фильма не должна быть положительной");
-        }
+
+        assertFilm(film);
 
         if(filmHashMap.containsKey(film.getId())){
             int id = filmHashMap.get(film.getId()).getId();
@@ -85,4 +61,19 @@ public class FilmController {
     private int incId(){
         generatorId = generatorId + 1;
         return generatorId;}
+    private void assertFilm(Film film){
+        if(film.getName() == ""){
+            log.error("Название не может быть пустым");
+            throw new VaidationExeption("Название не может быть пустым");
+        } else if (film.getDescription().length() > 200) {
+            log.error("Максимальная длина описание - 200 символов");
+            throw new VaidationExeption("Максимальная длина описание - 200 символов");
+        } else if (film.getReleaseDate().isBefore(LocalDate.of(1895, DECEMBER, 28))) {
+            log.error("Дата релиза - не раньше 28 декабря 1895 года");
+            throw new VaidationExeption("Дата релиза - не раньше 28 декабря 1895 года");
+        }else if (film.getDuration() < 0) {
+            log.error("Продолжительность фильма не должна быть положительной");
+            throw new VaidationExeption("Продолжительность фильма не должна быть положительной");
+        }
+    }
 }
