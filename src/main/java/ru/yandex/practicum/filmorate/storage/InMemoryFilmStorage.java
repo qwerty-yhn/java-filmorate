@@ -1,9 +1,11 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exeption.VaidationExeption;
@@ -21,6 +23,7 @@ public class InMemoryFilmStorage implements FilmStorage{
     private Long generatorId = 0L;
 
     private static final Logger log = LoggerFactory.getLogger(InMemoryFilmStorage.class);
+
     private HashMap<Long, Film> filmHashMap = new HashMap<>();
 
     @Override
@@ -29,15 +32,16 @@ public class InMemoryFilmStorage implements FilmStorage{
 
         assertFilm(film);
 
-        film.setId(incId());
-        filmHashMap.put(film.getId(), film);
-        return filmHashMap.get(film.getId());
+        film.setId(incIdFilm().intValue());
+        filmHashMap.put(Long.valueOf(film.getId()), film);
+        return filmHashMap.get(Long.valueOf(film.getId()));
     }
 
     @Override
     public void deleteFilm(Film film) {
 
     }
+
     public Film getFilmId(Long id){
         if(filmHashMap.containsKey(id)){
             return filmHashMap.get(id);
@@ -47,24 +51,27 @@ public class InMemoryFilmStorage implements FilmStorage{
                     HttpStatus.NOT_FOUND, "Actor Not Found");
         }
     }
+
     @Override
     public Film updateFilm(Film film) {
         log.info("Получен запрос POST/films");
 
         assertFilm(film);
 
-        if(filmHashMap.containsKey(film.getId())){
-            Long id = filmHashMap.get(film.getId()).getId();
+        if(filmHashMap.containsKey(Long.valueOf(film.getId()))){
+            int id = filmHashMap.get(Long.valueOf(film.getId())).getId();
             film.setId(id);
-            filmHashMap.put(film.getId(), film);
-            return filmHashMap.get(film.getId());
+            filmHashMap.put(Long.valueOf(film.getId()), film);
+            return filmHashMap.get(Long.valueOf(film.getId()));
         }
         else{
             log.error("Нет такого film");
             throw new VaidationExeption("Нет такого film");
         }
     }
+
     public List<Film> getFilms(){
+
         List<Film> filmsList = new ArrayList<>();
         log.info("Получен запрос /users");
         for(Long inc: filmHashMap.keySet()){
@@ -72,9 +79,12 @@ public class InMemoryFilmStorage implements FilmStorage{
         }
         return filmsList;
     }
-    private Long incId(){
+
+    private Long incIdFilm(){
         generatorId = generatorId + 1;
-        return generatorId;}
+        return generatorId;
+    }
+    @Validated
     private void assertFilm(Film film){
         if(film.getName() == ""){
             log.error("Название не может быть пустым");

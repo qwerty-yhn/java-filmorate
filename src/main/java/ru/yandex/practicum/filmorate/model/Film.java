@@ -12,7 +12,7 @@ import lombok.Data;
 @Data
 public class Film {
 
-    private Long id;
+    private int id;
 
     private String name;
 

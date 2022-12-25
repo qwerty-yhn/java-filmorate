@@ -1,5 +1,8 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exeption.VaidationExeption;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -16,24 +19,23 @@ import org.slf4j.LoggerFactory;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
+import javax.validation.Valid;
+
 @RestController
+@RequiredArgsConstructor
 public class FilmController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
-
+    @Autowired
     private FilmService filmService;
 
-    public FilmController(FilmService filmService) {
-        this.filmService = filmService;
-    }
-
     @PutMapping(value = "/films")
-    public Film updateFilm(@RequestBody Film film){
+    public Film updateFilm(@Valid @RequestBody Film film){
         log.info("methot = 'PUT' endpoint = '/films' id = '" + film.getName() + "'");
         return filmService.updateFilm(film);
     }
 
     @PostMapping(value = "/films")
-    public Film createFilm(@RequestBody Film film){
+    public Film createFilm(@Valid @RequestBody Film film){
         log.info("methot = 'POST' endpoint = '/films' id = '" + film.getName() + "'");
         return filmService.createFilm(film);
     }
@@ -57,7 +59,7 @@ public class FilmController {
     }
 
    @GetMapping("/films/popular")
-    public List<Film> findAll(
+    public List<Film> getTopFilms(
             @RequestParam(value = "count", defaultValue = "10", required = false) Integer count){
         return filmService.getTopFilms(count);
     }

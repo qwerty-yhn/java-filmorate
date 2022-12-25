@@ -1,11 +1,14 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.controller.UserController;
+import ru.yandex.practicum.filmorate.exeption.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exeption.VaidationExeption;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -13,9 +16,10 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Component
+@RequiredArgsConstructor
 public class InMemoryUserStorage implements UserStorage{
 
-    private HashMap<Long, User> userHashMap = new HashMap<>();
+    final private HashMap<Long, User> userHashMap = new HashMap<>();
 
     private Long generatorId = 0L;
 
@@ -24,7 +28,7 @@ public class InMemoryUserStorage implements UserStorage{
 
         if (user.getName() == null || user.getName() == "") { user.setName( user.getLogin()); }
 
-        user.setId(incId());
+        user.setId(incIdUser());
         userHashMap.put(user.getId(), user);
         return userHashMap.get(user.getId());
     }
@@ -67,23 +71,19 @@ public class InMemoryUserStorage implements UserStorage{
         if (userHashMap.containsKey(id)){
             return userHashMap.get(id);
         }else {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Actor Not Found");
+            throw new UserNotFoundException("Нет такого user");
         }
     }
 
-    private Long incId(){
+    private Long incIdUser(){
         generatorId = generatorId + 1;
         return generatorId;
     }
-
+    @Validated
     private void assertUser(User user){
-
         if(user.getLogin() == "" || user.getLogin().contains(" ")){
-
             throw new VaidationExeption("Логин не может быть пустым и содержать пробелы");
         }else if (user.getBirthday().isAfter(LocalDate.now())) {
-
             throw new VaidationExeption("Дата рождения не может быть в будущем");
         }
     }
