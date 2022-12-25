@@ -25,9 +25,8 @@ public class InMemoryUserStorage implements UserStorage{
 
     @Override
     public User createUser(User user) {
-
+        assertUser(user);
         if (user.getName() == null || user.getName() == "") { user.setName( user.getLogin()); }
-
         user.setId(incIdUser());
         userHashMap.put(user.getId(), user);
         return userHashMap.get(user.getId());
@@ -45,7 +44,7 @@ public class InMemoryUserStorage implements UserStorage{
 
     @Override
     public User updateUser(User user) {
-
+        assertUser(user);
         if (user.getName() == "") { user.setName( user.getLogin()); }
         if(userHashMap.containsKey(user.getId())){
             Long id = userHashMap.get(user.getId()).getId();
@@ -79,7 +78,7 @@ public class InMemoryUserStorage implements UserStorage{
         generatorId = generatorId + 1;
         return generatorId;
     }
-    @Validated
+
     private void assertUser(User user){
         if(user.getLogin() == "" || user.getLogin().contains(" ")){
             throw new VaidationExeption("Логин не может быть пустым и содержать пробелы");

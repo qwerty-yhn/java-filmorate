@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import static java.util.Calendar.DECEMBER;
+
+
 @Component
 public class InMemoryFilmStorage implements FilmStorage{
 
@@ -32,9 +34,9 @@ public class InMemoryFilmStorage implements FilmStorage{
 
         assertFilm(film);
 
-        film.setId(incIdFilm().intValue());
-        filmHashMap.put(Long.valueOf(film.getId()), film);
-        return filmHashMap.get(Long.valueOf(film.getId()));
+        film.setId(incIdFilm());
+        filmHashMap.put(film.getId(), film);
+        return filmHashMap.get(film.getId());
     }
 
     @Override
@@ -58,11 +60,11 @@ public class InMemoryFilmStorage implements FilmStorage{
 
         assertFilm(film);
 
-        if(filmHashMap.containsKey(Long.valueOf(film.getId()))){
-            int id = filmHashMap.get(Long.valueOf(film.getId())).getId();
+        if(filmHashMap.containsKey(film.getId())){
+            Long id = filmHashMap.get(film.getId()).getId();
             film.setId(id);
-            filmHashMap.put(Long.valueOf(film.getId()), film);
-            return filmHashMap.get(Long.valueOf(film.getId()));
+            filmHashMap.put(film.getId(), film);
+            return filmHashMap.get(film.getId());
         }
         else{
             log.error("Нет такого film");
@@ -84,12 +86,9 @@ public class InMemoryFilmStorage implements FilmStorage{
         generatorId = generatorId + 1;
         return generatorId;
     }
-    @Validated
+
     private void assertFilm(Film film){
-        if(film.getName() == ""){
-            log.error("Название не может быть пустым");
-            throw new VaidationExeption("Название не может быть пустым");
-        } else if (film.getDescription().length() > 200) {
+        if (film.getDescription().length() > 200) {
             log.error("Максимальная длина описание - 200 символов");
             throw new VaidationExeption("Максимальная длина описание - 200 символов");
         } else if (film.getReleaseDate().isBefore(LocalDate.of(1895, DECEMBER, 28))) {

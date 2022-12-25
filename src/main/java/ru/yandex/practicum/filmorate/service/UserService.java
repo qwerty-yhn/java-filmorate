@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.exeption.VaidationExeption;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,23 +15,19 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-
+    @Autowired
     private final InMemoryUserStorage inMemoryUserStorage;
 
-    @Autowired
-    public UserService(InMemoryUserStorage inMemoryUserStorage) {
-        this.inMemoryUserStorage = inMemoryUserStorage;
-    }
-
     public User createUser(User user){
-        assertUser(user);
         return inMemoryUserStorage.createUser(user);
     }
+
     public User updateUser(User user){
-        assertUser(user);
         return inMemoryUserStorage.updateUser(user);
     }
+
     public List<User> getUsers(){
         return inMemoryUserStorage.getUsers();
     }
@@ -77,11 +74,5 @@ public class UserService {
             userFriends.add(inMemoryUserStorage.getUserById(inc));
         }
         return userFriends;
-    }
-
-    private void assertUser(User user){
-         if (user.getBirthday().isAfter(LocalDate.now())) {
-            throw new VaidationExeption("Дата рождения не может быть в будущем");
-        }
     }
 }

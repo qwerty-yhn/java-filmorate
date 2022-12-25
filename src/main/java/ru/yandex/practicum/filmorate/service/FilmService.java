@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import ru.yandex.practicum.filmorate.exeption.FilmNotFoundExeption;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
@@ -14,22 +15,20 @@ import java.util.stream.Collectors;
 
 
 @Service
-
+@RequiredArgsConstructor
 public class FilmService {
 
-    private final InMemoryFilmStorage inMemoryFilmStorage;
-
     @Autowired
-    public FilmService(InMemoryFilmStorage inMemoryFilmStorage) {
-        this.inMemoryFilmStorage = inMemoryFilmStorage;
-    }
+    private final InMemoryFilmStorage inMemoryFilmStorage;
 
     public Film createFilm(Film film){
         return inMemoryFilmStorage.addFilm(film);
     }
+
     public Film updateFilm(Film film){
         return inMemoryFilmStorage.updateFilm(film);
     }
+
     public Film addLikeToFilm(Long id, Long userId){
         Film film = inMemoryFilmStorage.getFilmId(id);
         film.getLikes().add(userId);
@@ -44,8 +43,7 @@ public class FilmService {
             inMemoryFilmStorage.updateFilm(film);
         }
         else{
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Actor Not Found");
+            throw new FilmNotFoundExeption("нет такого фильма");
         }
     }
 
