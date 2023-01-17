@@ -132,7 +132,7 @@ class FilmorateApplicationTests {
 	}
 	@Test
 	public void testFilmDbStorageGetMpaById() {
-		Mpa mpa = filmDbStorage.getMpa(3);
+		Mpa mpa = filmDbStorage.getMpa(1);
 		Assertions.assertThat(mpa)
 				.hasFieldOrPropertyWithValue("id", 1)
 				.hasFieldOrPropertyWithValue("name", "G");
