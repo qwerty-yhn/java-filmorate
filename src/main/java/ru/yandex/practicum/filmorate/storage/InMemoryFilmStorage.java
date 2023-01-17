@@ -22,11 +22,11 @@ import static java.util.Calendar.DECEMBER;
 @Component
 public class InMemoryFilmStorage implements FilmStorage{
 
-    private Long generatorId = 0L;
+    private int generatorId = 0;
 
     private static final Logger log = LoggerFactory.getLogger(InMemoryFilmStorage.class);
 
-    private HashMap<Long, Film> filmHashMap = new HashMap<>();
+    private HashMap<Integer, Film> filmHashMap = new HashMap<>();
 
     @Override
     public Film addFilm(Film film) {
@@ -61,7 +61,7 @@ public class InMemoryFilmStorage implements FilmStorage{
         assertFilm(film);
 
         if(filmHashMap.containsKey(film.getId())){
-            Long id = filmHashMap.get(film.getId()).getId();
+            int id = filmHashMap.get(film.getId()).getId();
             film.setId(id);
             filmHashMap.put(film.getId(), film);
             return filmHashMap.get(film.getId());
@@ -76,13 +76,13 @@ public class InMemoryFilmStorage implements FilmStorage{
 
         List<Film> filmsList = new ArrayList<>();
         log.info("Получен запрос /users");
-        for(Long inc: filmHashMap.keySet()){
+        for(int inc: filmHashMap.keySet()){
             filmsList.add(filmHashMap.get(inc));
         }
         return filmsList;
     }
 
-    private Long incIdFilm(){
+    private int incIdFilm(){
         generatorId = generatorId + 1;
         return generatorId;
     }

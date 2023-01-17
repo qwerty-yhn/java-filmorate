@@ -29,45 +29,45 @@ public class UserController {
     private UserService userService;
 
     @PostMapping(value = "/users")
-    public User createUser(@Valid @RequestBody User user){
+    public User createUser(@Valid @RequestBody User user) {
         log.info("method = 'POST' endpoint = '/users'");
         return userService.createUser(user);
     }
 
     @PutMapping(value = "/users")
-    public User updateUser(@Valid @RequestBody User user){
+    public User updateUser(@Valid @RequestBody User user) {
         log.info("method = 'PUT' endpoint = '/users'");
         return userService.updateUser(user);
     }
 
     @GetMapping("/users/{id}")
-    public User getUsersById(@PathVariable Long id){
-        return userService.getUsersById(id);
+    public User getUserId(@PathVariable int id) {
+        return userService.getUserId(id);
     }
 
     @GetMapping("/users")
-    public List<User> getUsers(){
+    public Collection<User> getUsers() {
         return userService.getUsers();
     }
 
     @GetMapping("/users/{id}/friends/common/{otherId}")
-    public List<User> getCommonFriend(@PathVariable Long id, @PathVariable Long otherId){
+    public List<User> getCommonFriend(@PathVariable int id, @PathVariable int otherId) {
         return userService.getCommonFriend(id, otherId);
     }
 
     @PutMapping(value = "/users/{id}/friends/{friendId}")
-    public Set<Long> addFriend(@PathVariable Long id, @PathVariable Long friendId){
+    public List<Integer> addFriend(@PathVariable int id, @PathVariable int friendId) {
         log.info("method = 'PUT' endpoint = '/users/{" + id + "}/friends/{" + friendId + "}'");
         return userService.addFriend(id, friendId);
     }
 
     @GetMapping("/users/{id}/friends")
-    public List<User> getFriend(@PathVariable Long id){
+    public List<User> getFriend(@PathVariable int id) {
         return userService.getFriend(id);
     }
 
     @DeleteMapping("/users/{id}/friends/{friendId}")
-    public void deleteFriend(@PathVariable Long id, @PathVariable Long friendId){
+    public void deleteFriend(@PathVariable int id, @PathVariable int friendId) {
         userService.deleteFriend(id, friendId);
     }
 }

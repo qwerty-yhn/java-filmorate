@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import ru.yandex.practicum.filmorate.exeption.FilmNotFoundExeption;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.storage.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
@@ -19,46 +22,45 @@ import java.util.stream.Collectors;
 public class FilmService {
 
     @Autowired
-    private final InMemoryFilmStorage inMemoryFilmStorage;
+    private final FilmDbStorage filmDbStorage;
 
     public Film createFilm(Film film){
-        return inMemoryFilmStorage.addFilm(film);
+        return filmDbStorage.addFilm(film);
     }
 
     public Film updateFilm(Film film){
-        return inMemoryFilmStorage.updateFilm(film);
+        return filmDbStorage.updateFilm(film);
     }
 
-    public Film addLikeToFilm(Long id, Long userId){
-        Film film = inMemoryFilmStorage.getFilmId(id);
-        film.getLikes().add(userId);
-        inMemoryFilmStorage.updateFilm(film);
-        return film;
+    public Film addLikeToFilm(int id, int userId){
+        return filmDbStorage.addLikeToFilm(id, userId);
     }
 
-    public void deleteLikeToFilm(Long id, Long userId){
-        if(inMemoryFilmStorage.getFilmId(id).getLikes().contains(userId)){
-            Film film = inMemoryFilmStorage.getFilmId(id);
-            film.getLikes().remove(userId);
-            inMemoryFilmStorage.updateFilm(film);
-        }
-        else{
-            throw new FilmNotFoundExeption("нет такого фильма");
-        }
+    public void deleteLikeToFilm(int id, int userId){
+        filmDbStorage.deleteLikeToFilm(id,userId);
     }
 
     public List<Film> getTopFilms(int count) {
-        return inMemoryFilmStorage.getFilms().stream()
-                .sorted((o1, o2) -> o2.getLikes().size() - o1.getLikes().size())
-                .limit(count)
-                .collect(Collectors.toList());
+        return filmDbStorage.getTopFilms(count);
     }
 
-    public Film getFilmId(Long id){
-        return inMemoryFilmStorage.getFilmId(id);
+    public Film getFilmId(int id){
+        return filmDbStorage.getFilmId(id);
     }
 
-    public List<Film> getFilms(){
-        return inMemoryFilmStorage.getFilms();
+    public Collection<Film> getFilms(){
+        return filmDbStorage.getFilms();
+    }
+    public Mpa getMpa(int id){
+        return filmDbStorage.getMpa(id);
+    }
+    public List<Mpa> getMpaAll(){
+        return filmDbStorage.getMpaAll();
+    }
+    public Genre getGenres(int id){
+        return filmDbStorage.getGenres(id);
+    }
+    public List<Genre> getGenresAll(){
+        return filmDbStorage.getGenresAll();
     }
 }

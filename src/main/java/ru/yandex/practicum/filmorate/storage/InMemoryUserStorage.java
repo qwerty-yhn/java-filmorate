@@ -27,13 +27,13 @@ public class InMemoryUserStorage implements UserStorage{
     public User createUser(User user) {
         assertUser(user);
         if (user.getName() == null || user.getName() == "") { user.setName( user.getLogin()); }
-        user.setId(incIdUser());
-        userHashMap.put(user.getId(), user);
+        //user.setId(incIdUser());
+        //userHashMap.put(user.getId(), user);
         return userHashMap.get(user.getId());
     }
 
     @Override
-    public void deleteUser(Long id) {
+    public void deleteUser(int id) {
         if(userHashMap.containsKey(id)){
             userHashMap.remove(id);
         }
@@ -47,9 +47,9 @@ public class InMemoryUserStorage implements UserStorage{
         assertUser(user);
         if (user.getName() == "") { user.setName( user.getLogin()); }
         if(userHashMap.containsKey(user.getId())){
-            Long id = userHashMap.get(user.getId()).getId();
-            user.setId(id);
-            userHashMap.put(user.getId(), user);
+            //Long id = userHashMap.get(user.getId()).getId();
+            //user.setId(id);
+            //userHashMap.put(user.getId(), user);
             return userHashMap.get(user.getId());
         }
         else{
