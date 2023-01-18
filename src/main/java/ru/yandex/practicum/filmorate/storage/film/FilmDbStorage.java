@@ -1,5 +1,6 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.film;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -9,7 +10,6 @@ import ru.yandex.practicum.filmorate.exeption.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -26,12 +26,9 @@ import static java.util.Calendar.DECEMBER;
 поэтому есть не которые косяки в плане оформления, но в логике работы все ок, как работать с БД я уловил.
 * */
 @Component
+@RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
-
-    public FilmDbStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     @Override
     public Film addFilm(Film film) {
@@ -89,7 +86,7 @@ public class FilmDbStorage implements FilmStorage {
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet(checkQuery, film.getId());
 
         if (!filmRows.next()) {
-            throw new UserNotFoundException("Фильм не найден");
+            throw new UserNotFoundException("Фильм с id = " + film.getId() + " не найден");
         }
         final String sqlQuery = "UPDATE films SET name = ?, description = ?, releaseDate = ?, " +
                 "duration = ? WHERE id = ?";
@@ -197,68 +194,11 @@ public class FilmDbStorage implements FilmStorage {
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet(checkQuery, id);
 
         if (!filmRows.next()) {
-            throw new FilmNotFoundExeption("Фильм не найден");
+            throw new FilmNotFoundExeption("Фильм c id =" + id + " не найден");
         }
 
         final String sqlQuery = "SELECT * FROM films WHERE id = ?";
         return jdbcTemplate.queryForObject(sqlQuery, this::mappingFilm, id);
     }
 
-    public Film addLikeToFilm(int id, int userId) {
-        final String sqlQuery = "INSERT INTO like_film (film_id, user_id)" +
-                "VALUES (?, ?);";
-        jdbcTemplate.update(sqlQuery, id, userId);
-        return getFilmId(id);
-    }
-
-    public void deleteLikeToFilm(int id, int userId) {
-
-        final String checkFilm = "SELECT * FROM films WHERE id = ?";
-        final String checkUser = "SELECT * FROM users WHERE id = ?";
-
-        SqlRowSet SqlFilm = jdbcTemplate.queryForRowSet(checkFilm, id);
-        SqlRowSet SqlUser = jdbcTemplate.queryForRowSet(checkUser, userId);
-
-        if (!SqlFilm.next() || !SqlUser.next()) {
-            throw new FilmNotFoundExeption("Фильм не найден");
-        }
-        final String sqlQuery = "DELETE FROM like_film " +
-                "WHERE film_id = ? AND user_id = ?";
-
-        jdbcTemplate.update(sqlQuery, id, userId);
-    }
-
-    public Mpa getMpa(int id) {
-        String sqlQuery = "SELECT * FROM mpa WHERE id = ?";
-        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet(sqlQuery, id);
-
-        if (!mpaRows.next()) {
-            throw new MpaNotFoundException("Рейтинг не найден");
-        }
-
-        sqlQuery = "SELECT * FROM mpa WHERE id = ?;";
-        return jdbcTemplate.queryForObject(sqlQuery, this::mappingMpa, id);
-    }
-
-    public List<Mpa> getMpaAll() {
-        String sqlQuery = "SELECT * FROM mpa";
-        return jdbcTemplate.query(sqlQuery, this::mappingMpa);
-    }
-
-    public Genre getGenres(int id) {
-        String sqlQueryCheck = "SELECT * FROM mpa WHERE id = ?";
-        SqlRowSet GenreRows = jdbcTemplate.queryForRowSet(sqlQueryCheck, id);
-
-        if (!GenreRows.next()) {
-            throw new GenreNotFoundException("Рейтинг не найден");
-        }
-
-        String sqlQuery = "SELECT * FROM genre WHERE id = ?";
-        return jdbcTemplate.queryForObject(sqlQuery, this::mappingGenre, id);
-    }
-
-    public List<Genre> getGenresAll() {
-        String sqlQuery = "SELECT * FROM genre";
-        return jdbcTemplate.query(sqlQuery, this::mappingGenre);
-    }
 }

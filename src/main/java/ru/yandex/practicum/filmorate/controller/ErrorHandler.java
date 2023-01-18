@@ -15,28 +15,28 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFoundException(final UserNotFoundException e) {
-        return new ErrorResponse(
+        return new ErrorResponse("User not found 404",
                 e.getMessage()
         );
     }
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFoundException(final FilmNotFoundExeption e) {
-        return new ErrorResponse(
+        return new ErrorResponse("Film not found 404",
                 e.getMessage()
         );
     }
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFoundException(final MpaNotFoundException e) {
-        return new ErrorResponse(
+        return new ErrorResponse("Mpa not found 404",
                 e.getMessage()
         );
     }
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFoundException(final GenreNotFoundException e) {
-        return new ErrorResponse(
+        return new ErrorResponse("Genre not found 404",
                 e.getMessage()
         );
     }
