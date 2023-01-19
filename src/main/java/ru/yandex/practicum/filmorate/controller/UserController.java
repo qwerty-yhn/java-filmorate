@@ -1,74 +1,51 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exeption.VaidationExeption;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import ru.yandex.practicum.filmorate.service.UserService;
+
+import javax.validation.Valid;
 
 @RestController
+@RequiredArgsConstructor
+@Slf4j
 public class UserController {
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
-    private HashMap<Integer, User> userHashMap = new HashMap<>();
-    private int generatorId = 0;
+
+    @Autowired
+    private UserService userService;
+
     @PostMapping(value = "/users")
-    public User createUser(@RequestBody User user){
-        log.info("Получен запрос GET/users");
-
-        assertUser(user);
-
-        if (user.getName() == null || user.getName() == "") { user.setName( user.getLogin()); }
-
-        user.setId(incId());
-        userHashMap.put(user.getId(), user);
-        return userHashMap.get(user.getId());
+    public User createUser(@Valid @RequestBody User user) {
+        log.info("method = 'POST' endpoint = '/users'");
+        return userService.createUser(user);
     }
+
     @PutMapping(value = "/users")
-    public User updateUser(@RequestBody User user){
-        log.info("Получен запрос PUT/users");
-
-        assertUser(user);
-
-        if (user.getName() == "") { user.setName( user.getLogin()); }
-        if(userHashMap.containsKey(user.getId())){
-            int id = userHashMap.get(user.getId()).getId();
-            user.setId(id);
-            userHashMap.put(user.getId(), user);
-            return userHashMap.get(user.getId());
-        }
-        else{
-            log.error("Нет такого user");
-            throw new VaidationExeption("Нет такого user");
-        }
+    public User updateUser(@Valid @RequestBody User user) {
+        log.info("method = 'PUT' endpoint = '/users'");
+        return userService.updateUser(user);
     }
+
+    @GetMapping("/users/{id}")
+    public User getUserId(@PathVariable int id) {
+        return userService.getUserId(id);
+    }
+
     @GetMapping("/users")
-    public List<User> getUsers(){
-        List<User> userList = new ArrayList<>();
-        log.info("Получен запрос /users");
-        for(Integer in: userHashMap.keySet()){
-            userList.add(userHashMap.get(in));
-        }
-        return userList;
+    public Collection<User> getUsers() {
+        return userService.getUsers();
     }
-    private int incId(){
-        generatorId = generatorId + 1;
-        return generatorId;}
-    private void assertUser(User user){
-        if(user.getEmail() == "" || !(user.getEmail().contains("@"))){
-            log.error("Электронная почта не может быть путой и должна содержать символ @");
-            throw new VaidationExeption("Электронная почта не может быть путой и должна содержать символ @");
-        }else if(user.getLogin() == "" || user.getLogin().contains(" ")){
-            log.error("Логин не может быть пустым и содержать пробелы");
-            throw new VaidationExeption("Логин не может быть пустым и содержать пробелы");
-        }else if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.error("Дата рождения не может быть в будущем");
-            throw new VaidationExeption("Дата рождения не может быть в будущем");
-        }
+
+    @GetMapping("/users/{id}/friends/common/{otherId}")
+    public List<User> getCommonFriend(@PathVariable int id, @PathVariable int otherId) {
+        return userService.getCommonFriend(id, otherId);
     }
+
+
 }
