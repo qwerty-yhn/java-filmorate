@@ -69,4 +69,10 @@ public class FilmController {
         }
         return topFilmsDirector;
     }
+
+    @DeleteMapping("/films/{filmId}")
+    public void deleteFilm(@PathVariable int filmId) {
+        log.info("method = 'DELETE' endpoint = '/films/{filmId}' id = '" + filmId + "'");
+        filmService.removeFilm(filmId);
+    }
 }
