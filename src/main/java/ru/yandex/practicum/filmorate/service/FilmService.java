@@ -26,7 +26,9 @@ public class FilmService {
         return filmDbStorage.updateFilm(film);
     }
 
-
+    public void removeFilm(int id) {
+        filmDbStorage.deleteFilm(filmDbStorage.getFilmId(id));
+    }
 
     public List<Film> getTopFilms(int count) {
         return filmDbStorage.getTopFilms(count);
