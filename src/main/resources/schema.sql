@@ -74,6 +74,6 @@ create table IF NOT EXISTS friendship
 
 create table IF NOT EXISTS like_film
 (
-    film_id INTEGER not null references films (id),
-    user_id INTEGER not null references users (id)
+    film_id INTEGER not null references films (id) ON DELETE CASCADE,
+    user_id INTEGER not null references users (id) ON DELETE CASCADE
 );
