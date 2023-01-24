@@ -17,7 +17,7 @@ import java.util.Objects;
 
 @Component
 public class DirectorDBStorage implements DirectorStorage{
-    JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     public DirectorDBStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
