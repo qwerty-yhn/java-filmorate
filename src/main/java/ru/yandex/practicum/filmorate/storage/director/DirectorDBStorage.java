@@ -6,6 +6,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exeption.DirectorNotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
 
 import java.sql.PreparedStatement;
@@ -33,7 +34,7 @@ public class DirectorDBStorage implements DirectorStorage{
         final String sqlQuery = "select * from DIRECTORS where ID = ?";
         List<Director> directors = jdbcTemplate.query(sqlQuery, this::makeDirector, id);
         if (directors.isEmpty()) {
-            return null;
+            throw new DirectorNotFoundException("Режиссер с id" + id + " не найден");
         }
         return directors.get(0);
     }

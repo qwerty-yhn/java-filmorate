@@ -46,7 +46,7 @@ public class DirectorController {
         return updatedDirector;
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public void removeDirector(@PathVariable int id) {
         directorService.remove(id);
         log.info("Удален режиссер с id={}", id);

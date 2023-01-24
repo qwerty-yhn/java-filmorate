@@ -18,7 +18,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.Calendar.DECEMBER;
 
@@ -59,7 +58,7 @@ public class FilmDbStorage implements FilmStorage {
             }
         }
         film.setMpa(MpaOfFilm(film.getId()));
-
+        updateFilmDirector(film);
         return film;
     }
 
@@ -75,6 +74,7 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update("DELETE FROM filmid_genreid WHERE id_film = ?", film.getId());
         jdbcTemplate.update("DELETE FROM mpa_films WHERE id_film = ?", film.getId());
         jdbcTemplate.update("DELETE FROM films WHERE id = ?", film.getId());
+        updateFilmDirector(film);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class FilmDbStorage implements FilmStorage {
                 "WHERE id_film = ?";
 
         Mpa mpa = jdbcTemplate.queryForObject(mpaSqlQuery, this::mappingMpa, film.getId());
-
+        updateFilmDirector(film);
         film.setGenres(genreOfFilm(film.getId()));
         return film;
     }
@@ -174,18 +174,18 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private Set<Director> directorOfFilm(int filmId) {
-        final String genresSqlQuery = "SELECT D.ID, D.NAME " +
+        final String genresSqlQuery = "SELECT * " +
                 "FROM FILM_DIRECTORS AS FD " +
                 "LEFT JOIN DIRECTORS AS D on FD.DIRECTOR_ID = D.ID " +
                 "WHERE FD.FILM_ID = ?";
 
-        return jdbcTemplate.query(genresSqlQuery, this::mappingDirector, filmId).stream()
-                .collect(Collectors.toSet());
+        List<Director> directors = jdbcTemplate.query(genresSqlQuery, this::mappingDirector, filmId);
+        return new HashSet<>(directors);
     }
 
     private Director mappingDirector(ResultSet resultSet, int rowNum) throws SQLException {
         return new Director(resultSet.getInt("DIRECTORS.ID"),
-                resultSet.getString("DIRECTORS.NAME")
+                resultSet.getString("NAME")
         );
     }
 
@@ -215,6 +215,23 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.queryForObject(sqlQuery, this::mappingFilm, id);
     }
 
+    private void updateFilmDirector(Film film) { // Обновление режиссеров фильма
+        String sqlQueryDeleteGenre = "delete from FILM_DIRECTORS where FILM_ID = ?";
+        jdbcTemplate.update(sqlQueryDeleteGenre, film.getId());
+
+        if(film.getDirectors() == null || film.getDirectors().isEmpty()) {
+            return;
+        }
+
+        for (Director director : film.getDirectors()) {
+            String sqlQueryAddGenre = "insert into FILM_DIRECTORS (FILM_ID, DIRECTOR_ID) " +
+                    "values (?, ?)";
+            jdbcTemplate.update(sqlQueryAddGenre, film.getId(), director.getId());
+        }
+        film.getDirectors().clear();
+        film.setDirectors(directorOfFilm(film.getId()));
+    }
+
     public List<Film> getTopFilmsDirector(int directorId, String sorting) { // Возвращает спсиок фильмов режиссера, отсортированных по году или лайкам
         if (sorting.equals("year")) {
             return getTopFilmsDirectorByYear(directorId);
@@ -230,7 +247,7 @@ public class FilmDbStorage implements FilmStorage {
                 "FROM FILM_DIRECTORS AS FD " +
                 "JOIN FILMS F on FD.FILM_ID = F.ID " +
                 "WHERE FD.DIRECTOR_ID = ? " +
-                "ORDER BY YEAR(F.DURATION)";
+                "ORDER BY F.DURATION";
         return jdbcTemplate.query(sqlQuery, this::mappingFilm, directorId);
     }
 

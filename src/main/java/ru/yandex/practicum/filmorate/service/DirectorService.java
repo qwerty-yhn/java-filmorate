@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exeption.DirectorNotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.storage.director.DirectorStorage;
 
@@ -31,10 +32,19 @@ public class DirectorService {
     }
 
     public Director update(Director director) {
+        checkingPresenceDirector(director.getId());
         return directorStorage.update(director);
     }
 
     public void remove(int id) {
+        checkingPresenceDirector(id);
         directorStorage.remove(id);
+    }
+
+    private void checkingPresenceDirector(Integer directorId) { // Проверка наличия режиссера в хранилище
+        if (directorStorage.getById(directorId) != null) {
+            return;
+        }
+        throw new DirectorNotFoundException("Режиссер с id" + directorId + " не найден");
     }
 }
