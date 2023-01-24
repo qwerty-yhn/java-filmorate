@@ -40,8 +40,7 @@ create table IF NOT EXISTS users
     email    varchar(255) NOT NULL,
     login    varchar(255) NOT NULL,
     name     varchar(255),
-    birthday date NOT NULL,
-    CONSTRAINT IF NOT EXISTS users_key UNIQUE(email)
+    birthday date NOT NULL
 );
 
 create table IF NOT EXISTS userid_filmid
