@@ -32,8 +32,11 @@ public class UserService {
         return userDbStorage.getUserId(id);
     }
 
-
     public List<User> getCommonFriend(int id, int otherId){
         return userDbStorage.getCommonFriend(id, otherId);
+    }
+
+    public void deleteUser(int id) {
+        userDbStorage.deleteUser(id);
     }
 }

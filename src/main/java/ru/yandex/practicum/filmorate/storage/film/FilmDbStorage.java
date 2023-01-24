@@ -21,10 +21,6 @@ import java.util.List;
 
 import static java.util.Calendar.DECEMBER;
 
-//Сергей привет!
-/*У нас Жесткий дедлайн надо до 20 сдать. Я очень торопился успеть,
-поэтому есть не которые косяки в плане оформления, но в логике работы все ок, как работать с БД я уловил.
-* */
 @Component
 @RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
