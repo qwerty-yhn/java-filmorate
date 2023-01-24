@@ -22,14 +22,14 @@ create table IF NOT EXISTS mpa
 
 create table IF NOT EXISTS mpa_films
 (
-    id_film INTEGER not null references films (id),
-    id_mpa  INTEGER not null references mpa (id)
+    id_film INTEGER references films (id),
+    id_mpa  INTEGER references mpa (id)
 );
 
 create table IF NOT EXISTS filmid_genreid
 (
-    id_film  INTEGER not null references films (id),
-    id_genre INTEGER not null references genre (id)
+    id_film  INTEGER references films (id) ON DELETE CASCADE,
+    id_genre INTEGER references genre (id) ON DELETE CASCADE
 );
 
 
@@ -61,6 +61,6 @@ create table IF NOT EXISTS friendship
 
 create table IF NOT EXISTS like_film
 (
-    film_id INTEGER not null references films (id),
-    user_id INTEGER not null references users (id)
+    film_id INTEGER not null references films (id) ON DELETE CASCADE,
+    user_id INTEGER not null references users (id) ON DELETE CASCADE
 );
