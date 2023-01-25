@@ -51,8 +51,6 @@ public class FilmController {
         return filmService.getFilmId(id);
     }
 
-
-
     @GetMapping("/films/popular")
     public List<Film> getTopFilms(
             @RequestParam(value = "count", defaultValue = "10", required = false) Integer count) {
@@ -64,8 +62,5 @@ public class FilmController {
         log.info("method = 'DELETE' endpoint = '/films/{filmId}' id = '" + filmId + "'");
         filmService.removeFilm(filmId);
     }
-
-
-
 
 }

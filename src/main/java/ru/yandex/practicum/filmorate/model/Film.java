@@ -31,9 +31,8 @@ public class Film {
 
     private List<Genre> genres;
 
-    //private String mpa;
     private Mpa mpa;
 
-    private Set<Long> likes = new HashSet<>();
+    private Set<Integer> likes;
 
 }

@@ -8,6 +8,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exeption.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.Date;
@@ -15,6 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -119,6 +121,11 @@ public class UserDbStorage implements UserStorage {
                 "                                                                                   WHERE fs.ID_USER = ?));";
 
         return jdbcTemplate.query(sqlQuery, this::mappingUser, id, otherId);
+    }
+    public List<Film> getRecommendations(int id){
+        User user = getUserId(id);
+        List<Film> test = new ArrayList<>();
+        return test;
     }
 
 
