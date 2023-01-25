@@ -13,5 +13,5 @@ interface FilmStorage {
 
     Film updateFilm(Film film);
 
-
+    List<Film> getTopFilmsDirector(int directorId, String sorting);
 }

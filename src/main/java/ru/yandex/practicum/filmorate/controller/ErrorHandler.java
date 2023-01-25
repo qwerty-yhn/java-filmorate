@@ -4,11 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.yandex.practicum.filmorate.exeption.FilmNotFoundExeption;
-import ru.yandex.practicum.filmorate.exeption.GenreNotFoundException;
-import ru.yandex.practicum.filmorate.exeption.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exeption.*;
 import ru.yandex.practicum.filmorate.model.ErrorResponse;
-import ru.yandex.practicum.filmorate.exeption.MpaNotFoundException;
 
 @RestControllerAdvice
 public class ErrorHandler {
@@ -41,4 +38,11 @@ public class ErrorHandler {
         );
     }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleDirectorNotFoundException(final DirectorNotFoundException e) {
+        return new ErrorResponse("Director not found 404",
+                e.getMessage()
+        );
+    }
 }
