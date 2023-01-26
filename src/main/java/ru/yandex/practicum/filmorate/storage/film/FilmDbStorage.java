@@ -261,4 +261,69 @@ public class FilmDbStorage implements FilmStorage {
                 "ORDER BY likes DESC";
         return jdbcTemplate.query(sqlQuery, this::mappingFilm, directorId);
     }
+
+    public List<Film> searchFilm(String query, String by) {
+        String queryExtended = "%" + query + "%";
+        String[] splitedBy = by.split(",");
+
+        if(splitedBy.length == 1) {
+            if (splitedBy[0].equals("title")) {
+                final String sqlQuery = "SELECT id, name, description, releaseDate, duration " +
+                        "FROM films AS f " +
+                        "LEFT JOIN( " +
+                            "SELECT film_id, COUNT(film_id) as total " +
+                            "FROM like_film " +
+                            "GROUP BY film_id " +
+                        ") AS l ON l.film_id = f.id " +
+                        "WHERE UCASE(f.name) LIKE UCASE(?) " +
+                        "ORDER BY l.total DESC";
+                return jdbcTemplate.query(sqlQuery, this::mappingFilm, queryExtended);
+            } else if (splitedBy[0].equals("director")) {
+                final String sqlQuery = "SELECT id, name, description, releaseDate, duration " +
+                        "FROM films AS f " +
+                        "LEFT JOIN( " +
+                            "SELECT film_id, COUNT(film_id) as total " +
+                            "FROM like_film " +
+                            "GROUP BY film_id " +
+                        ") AS l ON l.film_id = f.id " +
+                        "WHERE f.id IN ( " +
+                            "SELECT film_id " +
+                            "FROM film_directors " +
+                            "WHERE director_id IN ( " +
+                                "SELECT id " +
+                                "FROM directors " +
+                                "WHERE UCASE(name) LIKE UCASE(?) " +
+                            ") " +
+                            "GROUP BY film_id " +
+                        ") " +
+                        "ORDER BY l.total DESC";
+                return jdbcTemplate.query(sqlQuery, this::mappingFilm, queryExtended);
+            }
+        }else
+        if(splitedBy.length == 2) {
+            if (by.contains("title") && by.contains("director")) {
+                final String sqlQuery = "SELECT id, name, description, releaseDate, duration " +
+                        "FROM films AS f " +
+                        "LEFT JOIN( " +
+                            "SELECT film_id, COUNT(film_id) as total " +
+                            "FROM like_film " +
+                            "GROUP BY film_id " +
+                        ") AS l ON l.film_id = f.id " +
+                        "WHERE f.id IN ( " +
+                            "SELECT film_id " +
+                            "FROM film_directors " +
+                            "WHERE director_id IN ( " +
+                                "SELECT id " +
+                                "FROM directors " +
+                                "WHERE UCASE(name) LIKE UCASE(?) " +
+                            ") " +
+                            "GROUP BY film_id " +
+                        ") " +
+                        "OR UCASE(f.name) LIKE UCASE(?) " +
+                        "ORDER BY l.total DESC";
+                return jdbcTemplate.query(sqlQuery, this::mappingFilm, queryExtended, queryExtended);
+            }
+        }
+        throw new DirectorNotFoundException("Неверный запрос поиска");
+    }
 }

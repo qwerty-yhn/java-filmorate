@@ -45,4 +45,11 @@ public class ErrorHandler {
                 e.getMessage()
         );
     }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleSearchNotFoundException(final SearchNotFoundException e) {
+        return new ErrorResponse("Films not found 404",
+                e.getMessage()
+        );
+    }
 }
