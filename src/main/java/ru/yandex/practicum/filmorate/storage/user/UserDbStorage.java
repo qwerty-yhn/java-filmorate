@@ -16,9 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -122,11 +120,7 @@ public class UserDbStorage implements UserStorage {
 
         return jdbcTemplate.query(sqlQuery, this::mappingUser, id, otherId);
     }
-    public List<Film> getRecommendations(int id){
-        User user = getUserId(id);
-        List<Film> test = new ArrayList<>();
-        return test;
-    }
+
 
 
 

@@ -62,5 +62,10 @@ public class FilmController {
         log.info("method = 'DELETE' endpoint = '/films/{filmId}' id = '" + filmId + "'");
         filmService.removeFilm(filmId);
     }
+    @GetMapping("/users/{id}/recommendations")
+    public List<Film> getRecommendations(@PathVariable int id) {
+
+        return filmService.getRecommendations(id);
+    }
 
 }

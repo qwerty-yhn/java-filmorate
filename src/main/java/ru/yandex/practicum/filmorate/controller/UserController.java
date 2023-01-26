@@ -53,9 +53,5 @@ public class UserController {
         log.info("method = 'DELETE' endpoint = '/users/{userId}'");
         userService.deleteUser(userId);
     }
-    @GetMapping("/users/{id}/recommendations")
-    public List<Film> getRecommendations(@PathVariable int id) {
 
-        return userService.getRecommendations(id);
-    }
 }

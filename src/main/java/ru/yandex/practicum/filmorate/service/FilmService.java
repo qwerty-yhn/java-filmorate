@@ -42,4 +42,6 @@ public class FilmService {
         return filmDbStorage.getFilms();
     }
 
+    public List<Film> getRecommendations(int id){return filmDbStorage.getRecommendations(id);}
+
 }
