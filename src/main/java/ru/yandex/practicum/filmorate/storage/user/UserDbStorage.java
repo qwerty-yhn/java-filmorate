@@ -96,9 +96,9 @@ public class UserDbStorage implements UserStorage {
     }
 
     public User getUserId(int id) {
-        String sqlQueryСheck = "SELECT * FROM users WHERE id = ?";
+        String sqlQueryCheck = "SELECT * FROM users WHERE id = ?";
 
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet(sqlQueryСheck, id);
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet(sqlQueryCheck, id);
         if (!userRows.next()) {
             throw new UserNotFoundException("Пользователь с id = " + id + " не найден");
         }
