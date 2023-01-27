@@ -6,8 +6,9 @@ import lombok.Data;
 import ru.yandex.practicum.filmorate.model.enums.EventTypes;
 import ru.yandex.practicum.filmorate.model.enums.OperationTypes;
 
+import javax.validation.constraints.Positive;
+
 @Data
-@AllArgsConstructor
 @Builder
 public class Event {
     private Long timestamp;

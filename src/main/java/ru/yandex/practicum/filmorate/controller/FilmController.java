@@ -75,4 +75,10 @@ public class FilmController {
         log.info("method = 'DELETE' endpoint = '/films/{filmId}' id = '" + filmId + "'");
         filmService.removeFilm(filmId);
     }
+
+    @GetMapping("/films/search")
+    public List<Film> searchFilm(@RequestParam String query,
+                                 @RequestParam String by) {
+        return filmService.searchFilm(query, by);
+    }
 }

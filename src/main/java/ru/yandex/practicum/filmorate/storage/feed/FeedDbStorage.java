@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.model.enums.OperationTypes;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -48,13 +49,13 @@ public class FeedDbStorage implements FeedStorage{
     }
 
     private Event makeEvent(ResultSet rs) throws SQLException {
-        Long timestamp = rs.getLong("created_at");
-        int userId = rs.getInt("user_id");
-        EventTypes eventType = EventTypes.valueOf(rs.getString("event_type"));
-        OperationTypes operation = OperationTypes.valueOf(rs.getString("operation"));
-        int eventId = rs.getInt("id");
-        int entityId = rs.getInt("entity_id");
-
-        return new Event(timestamp, userId, eventId, entityId, eventType, operation);
+        return Event.builder()
+                .timestamp(rs.getLong("created_at"))
+                .userId(rs.getInt("user_id"))
+                .entityId(rs.getInt("entity_id"))
+                .eventType(EventTypes.valueOf(rs.getString("event_type")))
+                .operation(OperationTypes.valueOf(rs.getString("operation")))
+                .eventId(rs.getInt("id"))
+                .build();
     }
 }

@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.enums.EventTypes;
 import ru.yandex.practicum.filmorate.model.enums.OperationTypes;
 import ru.yandex.practicum.filmorate.storage.friend.FriendDbStorage;
 import ru.yandex.practicum.filmorate.storage.genre.GenreDbStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 
 import java.util.List;
 @Service
@@ -17,8 +18,11 @@ public class FriendService {
     @Autowired
     private final FriendDbStorage friendDbStorage;
     private final FeedService feedService;
+    private final UserDbStorage userDbStorage;
 
     public List<Integer> addFriend(int id, int friendId){
+        userDbStorage.getUserId(id);
+        userDbStorage.getUserId(friendId);
 
         Event event = Event.builder()
                 .timestamp(System.currentTimeMillis())
@@ -37,6 +41,9 @@ public class FriendService {
     }
 
     public void deleteFriend(int id, int friendId){
+        userDbStorage.getUserId(id);
+        userDbStorage.getUserId(friendId);
+
         friendDbStorage.deleteFriend(id, friendId);
 
         Event event = Event.builder()
