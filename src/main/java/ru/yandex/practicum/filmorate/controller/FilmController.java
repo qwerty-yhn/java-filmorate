@@ -57,6 +57,19 @@ public class FilmController {
         return filmService.getTopFilms(count);
     }
 
+    @GetMapping("/films/director/{directorId}")
+    public List<Film> getTopFilmsDirector(@PathVariable int directorId, @RequestParam String sortBy) {
+        List<Film> topFilmsDirector = filmService.getTopFilmsDirector(directorId, sortBy);
+        if (sortBy.equals("year")) {
+            log.info("Возвращен список режиссеров отсортированный по годам {}", topFilmsDirector);
+        } else if (sortBy.equals("likes")) {
+            log.info("Возвращен список режиссеров отсортированный по лафкам {}", topFilmsDirector);
+        } else {
+            log.info("Неверный тип сортировки");
+        }
+        return topFilmsDirector;
+    }
+
     @DeleteMapping("/films/{filmId}")
     public void deleteFilm(@PathVariable int filmId) {
         log.info("method = 'DELETE' endpoint = '/films/{filmId}' id = '" + filmId + "'");
@@ -65,7 +78,14 @@ public class FilmController {
     @GetMapping("/users/{id}/recommendations")
     public List<Film> getRecommendations(@PathVariable int id) {
 
+
         return filmService.getRecommendations(id);
     }
 
+
+    @GetMapping("/films/search")
+    public List<Film> searchFilm(@RequestParam String query,
+                                 @RequestParam String by) {
+        return filmService.searchFilm(query, by);
+    }
 }
