@@ -60,4 +60,7 @@ public class FilmService {
         return filmDbStorage.searchFilm(query, by);
     }
 
+    public List<Film> getCommonFilms(Integer userId, Integer friendId) {
+        return filmDbStorage.getCommonFilms(userId, friendId);
+    }
 }
