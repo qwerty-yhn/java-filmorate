@@ -40,6 +40,10 @@ public class FilmService {
         return filmDbStorage.getFilms();
     }
 
+
+    public List<Film> getRecommendations(int id){return filmDbStorage.getRecommendations(id);}
+
+
     public List<Film> getTopFilmsDirector(int directorId, String sorting) {
         checkingPresenceDirector(directorId);
         return filmDbStorage.getTopFilmsDirector(directorId, sorting);
@@ -55,4 +59,5 @@ public class FilmService {
     public List<Film> searchFilm(String query, String by) {
         return filmDbStorage.searchFilm(query, by);
     }
+
 }

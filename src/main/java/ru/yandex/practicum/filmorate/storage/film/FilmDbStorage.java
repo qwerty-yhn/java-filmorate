@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -148,6 +149,9 @@ public class FilmDbStorage implements FilmStorage {
 
         return film;
     }
+    private Integer mappingInteger(ResultSet resultSet, int rowNum) throws SQLException {
+        return resultSet.getInt("FILM_ID");
+    }
 
     private Mpa MpaOfFilm(int filmId) {
         final String mpaSqlQuery = "SELECT id, name " +
@@ -213,6 +217,52 @@ public class FilmDbStorage implements FilmStorage {
 
         final String sqlQuery = "SELECT * FROM films WHERE id = ?";
         return jdbcTemplate.queryForObject(sqlQuery, this::mappingFilm, id);
+    }
+    public List<Film> getRecommendations(int id){
+
+        HashMap<Integer, List<Integer>> hashMapWithLikingList = new HashMap<>();
+        List<Integer> resultIntermediate = new ArrayList<>();
+        List<Integer> resultPreIntermediate = new ArrayList<>();
+        List<Film> result = new ArrayList<>();
+
+        int inc = 1;
+        while (true){
+            SqlRowSet filmRows = jdbcTemplate.queryForRowSet("SELECT *  FROM LIKE_FILM WHERE USER_ID = ?", inc);
+            if (!filmRows.next()) {
+                inc = 1;
+                break;
+            }
+            List<Integer> l = jdbcTemplate.query("SELECT DISTINCT FILM_ID  FROM LIKE_FILM WHERE USER_ID = ?", this::mappingInteger, inc);
+            hashMapWithLikingList.put(inc,l);
+            inc++;
+        }
+
+        List<Integer> listLikingFilms = jdbcTemplate.query("SELECT DISTINCT FILM_ID  FROM LIKE_FILM WHERE USER_ID = ?", this::mappingInteger, id);
+
+        hashMapWithLikingList.remove(id);
+
+        int count = 0;
+        int max = 0;
+        for(List<Integer> l : hashMapWithLikingList.values()){
+            for(Integer s : l){
+                if(listLikingFilms.contains(s)){
+                    count++;
+                }
+                else{
+                    resultIntermediate.add(s);
+                }
+            }
+            if(max < count){
+                max = count;
+                resultPreIntermediate = new ArrayList<Integer>(resultIntermediate);
+            }
+            count = 0;
+            result.clear();
+        }
+        for(Integer i: resultPreIntermediate){
+            result.add(getFilmId(i));
+        }
+        return result;
     }
 
     private void updateFilmDirector(Film film) { // Обновление режиссеров фильма
