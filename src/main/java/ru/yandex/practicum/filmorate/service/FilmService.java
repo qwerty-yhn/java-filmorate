@@ -2,6 +2,8 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.yandex.practicum.filmorate.exeption.DirectorNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.director.DirectorStorage;
@@ -26,10 +28,6 @@ public class FilmService {
 
     public void removeFilm(int id) {
         filmDbStorage.deleteFilm(filmDbStorage.getFilmId(id));
-    }
-    
-    public List<Film> getTopFilms(int count) {
-        return filmDbStorage.getTopFilms(count);
     }
 
     public Film getFilmId(int id){
@@ -60,7 +58,12 @@ public class FilmService {
         return filmDbStorage.searchFilm(query, by);
     }
 
+
+    public List<Film> getPopularFilms(Integer count, Integer genreId, Integer year) {
+        return filmDbStorage.getPopularFilms(count, genreId, year);
+    }
     public List<Film> getCommonFilms(Integer userId, Integer friendId) {
         return filmDbStorage.getCommonFilms(userId, friendId);
+
     }
 }
