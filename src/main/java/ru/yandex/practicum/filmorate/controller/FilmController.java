@@ -86,6 +86,13 @@ public class FilmController {
     @GetMapping("/films/search")
     public List<Film> searchFilm(@RequestParam String query,
                                  @RequestParam String by) {
+        log.info("method = 'GET' endpoint = '/films/search' query = '{}' by = '{}'", query, by);
         return filmService.searchFilm(query, by);
+    }
+
+    @GetMapping("/films/common")
+    public List<Film> getCommonFilms(@RequestParam Integer userId, @RequestParam Integer friendId) {
+        log.info("method = 'GET' endpoint = '/films/common' userId = '{}' friendId = '{}'", userId, friendId);
+        return filmService.getCommonFilms(userId, friendId);
     }
 }
