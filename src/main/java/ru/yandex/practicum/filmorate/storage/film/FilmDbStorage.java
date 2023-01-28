@@ -366,7 +366,7 @@ public class FilmDbStorage implements FilmStorage {
 
     public List<Film> getPopularFilms(Integer count, Integer genreId, Integer year) {
         int correctCount;
-        if (count != 0) {
+        if (count != null) {
             correctCount = count;
         } else {
             correctCount = 10;
@@ -389,7 +389,7 @@ public class FilmDbStorage implements FilmStorage {
             sqlQuery.append("WHERE EXTRACT(YEAR from f.releaseDate) = ").append(year).append(" ");
         }
 
-        sqlQuery.append("group by f.ID, f.NAME, f.DESCRIPTION, f.RELEASEDATE, f.DURATION  ")
+        sqlQuery.append("group by f.ID, f.NAME, f.DESCRIPTION, f.RELEASEDATE, f.DURATION, l.USER_ID  ")
                 .append("ORDER BY likes DESC ")
                 .append("LIMIT ?");
 
