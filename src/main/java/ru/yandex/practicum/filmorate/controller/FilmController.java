@@ -77,8 +77,10 @@ public class FilmController {
     @GetMapping("/films/search")
     public List<Film> searchFilm(@RequestParam String query,
                                  @RequestParam String by) {
+        log.info("method = 'GET' endpoint = '/films/search' query = '{}' by = '{}'", query, by);
         return filmService.searchFilm(query, by);
     }
+
 
     @GetMapping("/films/popular")
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10", required = false) Integer count,
@@ -87,5 +89,12 @@ public class FilmController {
         List<Film> popularFilms = filmService.getPopularFilms(count, genreId, year);
         log.info("Возвращен отсортированный список фильмов {}", popularFilms);
         return popularFilms;
+    }
+    
+    @GetMapping("/films/common")
+    public List<Film> getCommonFilms(@RequestParam Integer userId, @RequestParam Integer friendId) {
+        log.info("method = 'GET' endpoint = '/films/common' userId = '{}' friendId = '{}'", userId, friendId);
+        return filmService.getCommonFilms(userId, friendId);
+
     }
 }

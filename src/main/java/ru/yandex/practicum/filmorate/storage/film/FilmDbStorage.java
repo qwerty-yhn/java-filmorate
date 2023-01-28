@@ -363,6 +363,7 @@ public class FilmDbStorage implements FilmStorage {
         throw new DirectorNotFoundException("Неверный запрос поиска");
     }
 
+
     public List<Film> getPopularFilms(Integer count, Integer genreId, Integer year) {
         int correctCount;
         if (count != 0) {
@@ -393,5 +394,21 @@ public class FilmDbStorage implements FilmStorage {
                 .append("LIMIT ?");
 
         return sqlQuery.toString();
+}
+    public List<Film> getCommonFilms(Integer userId, Integer friendId) {
+        final String sqlQuery = "SELECT id, name, description, releaseDate, duration " +
+                "FROM films AS f " +
+                "WHERE f.id IN ( " +
+                " SELECT film_id " +
+                " FROM like_film " +
+                " WHERE user_id = ? AND film_id IN ( " +
+                "   SELECT film_id " +
+                "   FROM like_film " +
+                "   WHERE user_id = ? " +
+                " ) " +
+                " GROUP BY film_id " +
+                ")";
+        return jdbcTemplate.query(sqlQuery, this::mappingFilm, userId, friendId);
+
     }
 }
