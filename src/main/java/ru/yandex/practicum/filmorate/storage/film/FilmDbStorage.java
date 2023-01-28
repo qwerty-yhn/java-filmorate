@@ -193,20 +193,6 @@ public class FilmDbStorage implements FilmStorage {
         );
     }
 
-    public List<Film> getTopFilms(int count) {
-        final String sqlQuery = "SELECT id, name, description, releaseDate, duration " +
-                "FROM films " +
-                "LEFT JOIN like_film f ON films.id = f.film_id " +
-                "group by films.id, f.film_id IN ( " +
-                "    SELECT film_id " +
-                "    FROM like_film " +
-                ") " +
-                "ORDER BY COUNT(f.film_id) DESC " +
-                "LIMIT ?";
-
-        return jdbcTemplate.query(sqlQuery, this::mappingFilm, count);
-    }
-
     public Film getFilmId(int id) {
         final String checkQuery = "SELECT * FROM films WHERE id = ?";
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet(checkQuery, id);
@@ -375,5 +361,37 @@ public class FilmDbStorage implements FilmStorage {
             }
         }
         throw new DirectorNotFoundException("Неверный запрос поиска");
+    }
+
+    public List<Film> getPopularFilms(Integer count, Integer genreId, Integer year) {
+        int correctCount;
+        if (count != 0) {
+            correctCount = count;
+        } else {
+            correctCount = 10;
+        }
+
+        return jdbcTemplate.query(getQueryPopularFilms(genreId, year), this::mappingFilm, correctCount);
+    }
+
+    private String getQueryPopularFilms(Integer genreId, Integer year){
+        StringBuilder sqlQuery = new StringBuilder();
+        sqlQuery.append("SELECT *, COUNT(l.FILM_ID) AS likes ")
+                .append("FROM FILMS AS f ")
+                .append("LEFT JOIN LIKE_FILM AS l ON f.ID = l.FILM_ID ");
+
+        if (genreId != null) {
+            sqlQuery.append("JOIN FILMID_GENREID AS fg ON (fg.id_film = f.id AND fg.id_genre = ").append(genreId).append(") ");
+        }
+
+        if (year != null) {
+            sqlQuery.append("WHERE EXTRACT(YEAR from f.releaseDate) = ").append(year).append(" ");
+        }
+
+        sqlQuery.append("group by f.ID, f.NAME, f.DESCRIPTION, f.RELEASEDATE, f.DURATION  ")
+                .append("ORDER BY likes DESC ")
+                .append("LIMIT ?");
+
+        return sqlQuery.toString();
     }
 }

@@ -11,8 +11,6 @@ import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
 
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
@@ -51,12 +49,6 @@ public class FilmController {
         return filmService.getFilmId(id);
     }
 
-    @GetMapping("/films/popular")
-    public List<Film> getTopFilms(
-            @RequestParam(value = "count", defaultValue = "10", required = false) Integer count) {
-        return filmService.getTopFilms(count);
-    }
-
     @GetMapping("/films/director/{directorId}")
     public List<Film> getTopFilmsDirector(@PathVariable int directorId, @RequestParam String sortBy) {
         List<Film> topFilmsDirector = filmService.getTopFilmsDirector(directorId, sortBy);
@@ -82,10 +74,18 @@ public class FilmController {
         return filmService.getRecommendations(id);
     }
 
-
     @GetMapping("/films/search")
     public List<Film> searchFilm(@RequestParam String query,
                                  @RequestParam String by) {
         return filmService.searchFilm(query, by);
+    }
+
+    @GetMapping("/films/popular")
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10", required = false) Integer count,
+                                      @RequestParam(required = false) Integer genreId,
+                                      @RequestParam(required = false) Integer year) {
+        List<Film> popularFilms = filmService.getPopularFilms(count, genreId, year);
+        log.info("Возвращен отсортированный список фильмов {}", popularFilms);
+        return popularFilms;
     }
 }

@@ -33,7 +33,6 @@ public class Film {
 
     private Mpa mpa;
 
-
     private Set<Integer> likes = new HashSet<>();
 
     private Set<Director> directors = new HashSet<>();
