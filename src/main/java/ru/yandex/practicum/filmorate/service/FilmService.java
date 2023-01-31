@@ -51,7 +51,7 @@ public class FilmService {
         if (directorStorage.getById(directorId) != null) {
             return;
         }
-        throw new DirectorNotFoundException("Режиссер с id" + directorId + " не найден");
+        throw new DirectorNotFoundException(directorId);
     }
 
     public List<Film> searchFilm(String query, String by) {
