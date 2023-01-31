@@ -33,7 +33,7 @@ public class DirectorDBStorage implements DirectorStorage{
         final String sqlQuery = "select * from DIRECTORS where ID = ?";
         List<Director> directors = jdbcTemplate.query(sqlQuery, this::makeDirector, id);
         if (directors.isEmpty()) {
-            throw new DirectorNotFoundException("Режиссер с id" + id + " не найден");
+            throw new DirectorNotFoundException(id);
         }
         return directors.get(0);
     }
