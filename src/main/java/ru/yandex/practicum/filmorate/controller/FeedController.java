@@ -12,15 +12,13 @@ import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.List;
 
-@RestController("FeedController")
+@RestController
 @RequiredArgsConstructor
 public class FeedController {
     private final FeedService feedService;
-    private final UserService userService;
 
     @GetMapping("/users/{id}/feed")
-    public List<Event> findById(@PathVariable int id) {
-        userService.getUserId(id);
+    public List<Event> getById(@PathVariable int id) {
         return feedService.getByUserId(id);
     }
 
