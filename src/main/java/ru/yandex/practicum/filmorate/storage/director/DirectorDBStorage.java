@@ -19,7 +19,6 @@ import java.util.Objects;
 @Component
 @RequiredArgsConstructor
 public class DirectorDBStorage implements DirectorStorage{
-	
     private final JdbcTemplate jdbcTemplate;
 
     @Override
