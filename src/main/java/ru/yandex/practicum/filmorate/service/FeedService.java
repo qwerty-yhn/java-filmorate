@@ -7,12 +7,15 @@ import ru.yandex.practicum.filmorate.storage.feed.FeedStorage;
 
 import java.util.List;
 
-@Service("FeedService")
+@Service
 @RequiredArgsConstructor
 public class FeedService {
     private final FeedStorage feedStorage;
 
+    private final UserService userService;
+	
     public List<Event> getByUserId(int userId) {
+        userService.getUserId(userId);
         return feedStorage.getUserById(userId);
     }
 
