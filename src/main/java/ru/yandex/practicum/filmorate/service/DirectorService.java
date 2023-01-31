@@ -41,6 +41,6 @@ public class DirectorService {
         if (directorStorage.getById(directorId) != null) {
             return;
         }
-        throw new DirectorNotFoundException("Режиссер с id" + directorId + " не найден");
+        throw new DirectorNotFoundException(directorId);
     }
 }
