@@ -206,7 +206,7 @@ public class FilmDbStorage implements FilmStorage {
     }
     public List<Film> getRecommendations(int id){
 
-        HashMap<Integer, List<Integer>> hashMapWithLikingList = new HashMap<>();
+        Map<Integer, List<Integer>> MapToLikes = new HashMap<>();
         List<Integer> resultIntermediate = new ArrayList<>();
         List<Integer> resultPreIntermediate = new ArrayList<>();
         List<Film> result = new ArrayList<>();
@@ -218,18 +218,18 @@ public class FilmDbStorage implements FilmStorage {
                 inc = 1;
                 break;
             }
-            List<Integer> l = jdbcTemplate.query("SELECT DISTINCT FILM_ID  FROM LIKE_FILM WHERE USER_ID = ?", this::mappingInteger, inc);
-            hashMapWithLikingList.put(inc,l);
+            List<Integer> filmIdByUserId = jdbcTemplate.query("SELECT DISTINCT FILM_ID  FROM LIKE_FILM WHERE USER_ID = ?", this::mappingInteger, inc);
+            MapToLikes.put(inc,filmIdByUserId);
             inc++;
         }
 
         List<Integer> listLikingFilms = jdbcTemplate.query("SELECT DISTINCT FILM_ID  FROM LIKE_FILM WHERE USER_ID = ?", this::mappingInteger, id);
 
-        hashMapWithLikingList.remove(id);
+        MapToLikes.remove(id);
 
         int count = 0;
         int max = 0;
-        for(List<Integer> l : hashMapWithLikingList.values()){
+        for(List<Integer> l : MapToLikes.values()){
             for(Integer s : l){
                 if(listLikingFilms.contains(s)){
                     count++;
@@ -274,7 +274,7 @@ public class FilmDbStorage implements FilmStorage {
         } else if (sorting.equals("likes")) {
             return getTopFilmsDirectorByLikes(directorId);
         } else {
-            return null;
+            throw new DirectorNotFoundException("Не верный тип сортировки");
         }
     }
 
@@ -307,9 +307,9 @@ public class FilmDbStorage implements FilmStorage {
                 final String sqlQuery = "SELECT id, name, description, releaseDate, duration " +
                         "FROM films AS f " +
                         "LEFT JOIN( " +
-                            "SELECT film_id, COUNT(film_id) as total " +
-                            "FROM like_film " +
-                            "GROUP BY film_id " +
+                        "SELECT film_id, COUNT(film_id) as total " +
+                        "FROM like_film " +
+                        "GROUP BY film_id " +
                         ") AS l ON l.film_id = f.id " +
                         "WHERE UCASE(f.name) LIKE UCASE(?) " +
                         "ORDER BY l.total DESC";
@@ -318,19 +318,19 @@ public class FilmDbStorage implements FilmStorage {
                 final String sqlQuery = "SELECT id, name, description, releaseDate, duration " +
                         "FROM films AS f " +
                         "LEFT JOIN( " +
-                            "SELECT film_id, COUNT(film_id) as total " +
-                            "FROM like_film " +
-                            "GROUP BY film_id " +
+                        "SELECT film_id, COUNT(film_id) as total " +
+                        "FROM like_film " +
+                        "GROUP BY film_id " +
                         ") AS l ON l.film_id = f.id " +
                         "WHERE f.id IN ( " +
-                            "SELECT film_id " +
-                            "FROM film_directors " +
-                            "WHERE director_id IN ( " +
-                                "SELECT id " +
-                                "FROM directors " +
-                                "WHERE UCASE(name) LIKE UCASE(?) " +
-                            ") " +
-                            "GROUP BY film_id " +
+                        "SELECT film_id " +
+                        "FROM film_directors " +
+                        "WHERE director_id IN ( " +
+                        "SELECT id " +
+                        "FROM directors " +
+                        "WHERE UCASE(name) LIKE UCASE(?) " +
+                        ") " +
+                        "GROUP BY film_id " +
                         ") " +
                         "ORDER BY l.total DESC";
                 return jdbcTemplate.query(sqlQuery, this::mappingFilm, queryExtended);
@@ -341,19 +341,19 @@ public class FilmDbStorage implements FilmStorage {
                 final String sqlQuery = "SELECT id, name, description, releaseDate, duration " +
                         "FROM films AS f " +
                         "LEFT JOIN( " +
-                            "SELECT film_id, COUNT(film_id) as total " +
-                            "FROM like_film " +
-                            "GROUP BY film_id " +
+                        "SELECT film_id, COUNT(film_id) as total " +
+                        "FROM like_film " +
+                        "GROUP BY film_id " +
                         ") AS l ON l.film_id = f.id " +
                         "WHERE f.id IN ( " +
-                            "SELECT film_id " +
-                            "FROM film_directors " +
-                            "WHERE director_id IN ( " +
-                                "SELECT id " +
-                                "FROM directors " +
-                                "WHERE UCASE(name) LIKE UCASE(?) " +
-                            ") " +
-                            "GROUP BY film_id " +
+                        "SELECT film_id " +
+                        "FROM film_directors " +
+                        "WHERE director_id IN ( " +
+                        "SELECT id " +
+                        "FROM directors " +
+                        "WHERE UCASE(name) LIKE UCASE(?) " +
+                        ") " +
+                        "GROUP BY film_id " +
                         ") " +
                         "OR UCASE(f.name) LIKE UCASE(?) " +
                         "ORDER BY l.total DESC";
@@ -394,7 +394,7 @@ public class FilmDbStorage implements FilmStorage {
                 .append("LIMIT ?");
 
         return sqlQuery.toString();
-}
+    }
     public List<Film> getCommonFilms(Integer userId, Integer friendId) {
         final String sqlQuery = "SELECT id, name, description, releaseDate, duration " +
                 "FROM films AS f " +
