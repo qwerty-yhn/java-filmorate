@@ -8,6 +8,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exeption.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.Date;
@@ -15,8 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -35,7 +35,11 @@ public class UserDbStorage implements UserStorage {
             final PreparedStatement stmt = connection.prepareStatement(sqlQuery, new String[]{"id"});
             stmt.setString(1, user.getEmail());
             stmt.setString(2, user.getLogin());
-            stmt.setString(3, user.getName());
+            if(user.getName().isEmpty() || user.getName().isBlank()) {
+                stmt.setString(3, user.getLogin());
+            } else {
+                stmt.setString(3, user.getName());
+            }
             stmt.setDate(4, Date.valueOf(user.getBirthday()));
             return stmt;
         }, keyHolder);
@@ -92,9 +96,9 @@ public class UserDbStorage implements UserStorage {
     }
 
     public User getUserId(int id) {
-        String sqlQueryСheck = "SELECT * FROM users WHERE id = ?";
+        String sqlQueryCheck = "SELECT * FROM users WHERE id = ?";
 
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet(sqlQueryСheck, id);
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet(sqlQueryCheck, id);
         if (!userRows.next()) {
             throw new UserNotFoundException("Пользователь с id = " + id + " не найден");
         }
@@ -116,6 +120,7 @@ public class UserDbStorage implements UserStorage {
 
         return jdbcTemplate.query(sqlQuery, this::mappingUser, id, otherId);
     }
+
 
 
 

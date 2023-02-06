@@ -17,10 +17,10 @@ public class FriendDbStorage {
     private final JdbcTemplate jdbcTemplate;
 
     public List<Integer> addFriend(int id, int friendId) {
-        String sqlQueryСheck = "SELECT * FROM users WHERE id = ?";
+        String sqlQueryCheck = "SELECT * FROM users WHERE id = ?";
 
-        SqlRowSet idRows = jdbcTemplate.queryForRowSet(sqlQueryСheck, id);
-        SqlRowSet friendIdRows = jdbcTemplate.queryForRowSet(sqlQueryСheck, friendId);
+        SqlRowSet idRows = jdbcTemplate.queryForRowSet(sqlQueryCheck, id);
+        SqlRowSet friendIdRows = jdbcTemplate.queryForRowSet(sqlQueryCheck, friendId);
         if (!idRows.next() || !friendIdRows.next()) {
             throw new UserNotFoundException("Пользователь c id =" + id + " или " + friendId + "  не найден");
         }
@@ -31,8 +31,8 @@ public class FriendDbStorage {
     }
 
     public List<User> getFriend(int id) {
-        String sqlQueryСheck = "SELECT * FROM users WHERE id = ?";
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet(sqlQueryСheck, id);
+        String sqlQueryCheck = "SELECT * FROM users WHERE id = ?";
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet(sqlQueryCheck, id);
         if (!userRows.next()) {
             throw new UserNotFoundException("Пользователь c id =" + id + "  не найден");
         }
